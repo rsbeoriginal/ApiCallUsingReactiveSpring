@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -29,13 +31,18 @@ public class EmployeeClientController {
 
   @GetMapping("/{employeeId}")
   public Mono<EmployeeModel> getEmployeeById(@PathVariable("employeeId") String employeeId){
-    String url = employeeHost + ApiPaths.EMPLOYEE_PATH + "/" + employeeId;
+    String url = ApiPaths.getEmployeePath(employeeHost) + "/" + employeeId;
     return webClientHelper.performGetToMono(URI.create(url), null, EmployeeModel.class);
   }
 
   @GetMapping
-  public Flux<EmployeeModel> getEmployeeById(){
-    String url = employeeHost + ApiPaths.EMPLOYEE_PATH;
-    return webClientHelper.performGetToFlux(URI.create(url), null, EmployeeModel.class);
+  public Flux<EmployeeModel> getEmployeeList(){
+    return webClientHelper.performGetToFlux(URI.create(ApiPaths.getEmployeePath(employeeHost)), null, EmployeeModel.class);
+  }
+
+  @PostMapping
+  public Mono<EmployeeModel> saveEmployee(@RequestBody EmployeeModel employeeModel){
+    return webClientHelper.performPostToMono(URI.create(ApiPaths.getEmployeePath(employeeHost)), employeeModel,
+        EmployeeModel.class);
   }
 }
