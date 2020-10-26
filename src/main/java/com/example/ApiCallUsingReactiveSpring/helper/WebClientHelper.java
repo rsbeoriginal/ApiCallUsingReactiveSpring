@@ -2,6 +2,7 @@ package com.example.ApiCallUsingReactiveSpring.helper;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -46,5 +47,19 @@ public class WebClientHelper {
         )
         .exchange()
         .flatMapMany(clientResponse -> clientResponse.bodyToFlux(clazzResponse));
+  }
+
+  public <T> Mono<T> performPostToMono(URI uri, Object requestBody, Class<? extends T> clazzResponse){
+    return webClient.post()
+        .uri(uriBuilder -> uriBuilder
+            .scheme(uri.getScheme())
+            .host(uri.getHost())
+            .port(uri.getPort())
+            .path(uri.getPath())
+            .build()
+        )
+        .body(BodyInserters.fromValue(requestBody))
+        .exchange()
+        .flatMap(clientResponse -> clientResponse.bodyToMono(clazzResponse));
   }
 }
