@@ -62,4 +62,32 @@ public class WebClientHelper {
         .exchange()
         .flatMap(clientResponse -> clientResponse.bodyToMono(clazzResponse));
   }
+
+  public <T> Mono<T> performPutToMono(URI uri, Object requestBody, Class<? extends T> clazzResponse){
+    return webClient.put()
+        .uri(uriBuilder -> uriBuilder
+            .scheme(uri.getScheme())
+            .host(uri.getHost())
+            .port(uri.getPort())
+            .path(uri.getPath())
+            .build()
+        )
+        .body(BodyInserters.fromValue(requestBody))
+        .exchange()
+        .flatMap(clientResponse -> clientResponse.bodyToMono(clazzResponse));
+  }
+
+  public <T> Mono<T> performDeleteToMono(URI uri, MultiValueMap<String, String> params, Class<? extends T> clazzResponse){
+    return webClient.delete()
+        .uri(uriBuilder -> uriBuilder
+            .scheme(uri.getScheme())
+            .host(uri.getHost())
+            .port(uri.getPort())
+            .path(uri.getPath())
+            .queryParams(params)
+            .build()
+        )
+        .exchange()
+        .flatMap(clientResponse -> clientResponse.bodyToMono(clazzResponse));
+  }
 }
