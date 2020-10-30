@@ -78,7 +78,7 @@ public class WebClientHelper {
   }
 
   public <T> Mono<T> performDeleteToMono(URI uri, MultiValueMap<String, String> params, Class<? extends T> clazzResponse){
-    return webClient.get()
+    return webClient.delete()
         .uri(uriBuilder -> uriBuilder
             .scheme(uri.getScheme())
             .host(uri.getHost())
